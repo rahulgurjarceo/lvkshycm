@@ -244,6 +244,31 @@ header{
   from{transform:scale(.9);opacity:0}
   to{transform:scale(1);opacity:1}
 }
+.otp-boxes{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin-top:14px;
+}
+.otp-boxes input{
+  width:46px;
+  height:52px;
+  font-size:22px;
+  text-align:center;
+  border-radius:10px;
+  border:2px solid #e5e7eb;
+}
+#resendOtpBtn{
+  background:transparent;
+  color:var(--primary);
+  border:2px dashed var(--primary);
+}
+#resendOtpBtn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+
 </style>
 </head>
 
@@ -360,15 +385,23 @@ header{
       </select>
     </div>
 
-    <button onclick="sendOTP()">Send 6-Digit Email OTP</button>
+    <button id="getOtpBtn" onclick="sendOTP()">Get OTP</button>
 
-    <div id="otpBox" class="hidden">
-      <input id="otpInput" placeholder="Enter OTP"
-        style="margin-top:14px;width:100%;padding:12px">
-      <button style="margin-top:10px" onclick="verifyOTP()">
-        Verify & Login
-      </button>
-    </div>
+<button id="resendOtpBtn" class="hidden" onclick="resendOTP()">
+  Resend OTP (<span id="otpTimer">30</span>s)
+</button>
+
+<div id="otpBox" class="hidden">
+  <div class="otp-boxes">
+    <input maxlength="1">
+    <input maxlength="1">
+    <input maxlength="1">
+    <input maxlength="1">
+    <input maxlength="1">
+    <input maxlength="1">
+  </div>
+  <button onclick="verifyOTP()">Verify & Login</button>
+</div>
   </div>
 </div>
 
@@ -377,8 +410,23 @@ header{
 
 <!-- ===================== SCRIPT ===================== -->
 <script>
+  let generatedOTP = "";
+let otpTimer = 30;
+let otpInterval = null;
 /* ===== HERO SLIDER ===== */
 let slideIndex=0;
+
+const otpInputs = document.querySelectorAll(".otp-boxes input");
+
+otpInputs.forEach((box, i) => {
+  box.addEventListener("input", () => {
+    if (box.value && i < otpInputs.length - 1) {
+      otpInputs[i + 1].focus();
+    }
+  });
+});
+
+
 const slides=document.querySelectorAll(".slide");
 const dots=document.getElementById("heroDots");
 
@@ -426,6 +474,108 @@ input.addEventListener("input",()=>{
   sug.classList.remove("hidden");
 });
 
+
+function sendOTP(){
+  const emailVal = email.value.trim();
+  const nameVal  = fullName.value.trim();
+
+  if(!emailVal || !nameVal){
+    alert("Please fill name and email");
+    return;
+  }
+
+  const url =
+    "https://script.google.com/macros/s/AKfycbyA_rw1knYZUIDuBjg6uRa-ROfrqNffNzG-mqBuMcOltteAMQV9Cdq8Laa5CX5gUnBG/exec"
+    + "?action=sendOTP"
+    + "&email=" + encodeURIComponent(emailVal);
+
+  fetch(url, { mode: "no-cors" })
+    .then(() => {
+      document.getElementById("otpBox").classList.remove("hidden");
+      document.getElementById("getOtpBtn").classList.add("hidden");
+      document.getElementById("resendOtpBtn").classList.remove("hidden");
+      startOtpCountdown();
+    })
+    .catch(() => {
+      alert("Failed to send OTP");
+    });
+}
+
+function startOtpCountdown(){
+  otpTimer = 30;
+  const timerText = document.getElementById("otpTimer");
+  const resendBtn = document.getElementById("resendOtpBtn");
+
+  resendBtn.disabled = true;
+  timerText.textContent = otpTimer;
+
+  otpInterval = setInterval(()=>{
+    otpTimer--;
+    timerText.textContent = otpTimer;
+
+    if(otpTimer <= 0){
+      clearInterval(otpInterval);
+      resendBtn.disabled = false;
+    }
+  },1000);
+}
+
+function resendOTP(){
+  clearInterval(otpInterval);
+  sendOTP();
+}
+
+function verifyOTP(){
+  let enteredOTP = "";
+  otpInputs.forEach(i => enteredOTP += i.value);
+
+  if(enteredOTP.length !== 6){
+    alert("Enter complete OTP");
+    return;
+  }
+
+  const emailVal = email.value.trim();
+
+  const url =
+    "https://script.google.com/macros/s/AKfycbyA_rw1knYZUIDuBjg6uRa-ROfrqNffNzG-mqBuMcOltteAMQV9Cdq8Laa5CX5gUnBG/exec"
+    + "?action=verifyOTP"
+    + "&email=" + encodeURIComponent(emailVal)
+    + "&otp=" + enteredOTP;
+
+  fetch(url)
+    .then(res => res.text())
+    .then(text => {
+      if(text.includes("OTP verified")){
+        completeLogin();
+      } else {
+        alert("Invalid OTP");
+      }
+    });
+}
+
+function completeLogin(){
+  const user = {
+    name: fullName.value,
+    phone: phone.value,
+    email: email.value,
+    pincode: pincode.value,
+    address: address.value,
+    ageGroup: ageGroup.value,
+    profession: profession.value,
+    religion: religion.value,
+    caste: caste.value,
+    country: country.value
+  };
+
+  localStorage.setItem("user", JSON.stringify(user));
+
+  loginModal.classList.add("hidden");
+  loginBtn.classList.add("hidden");
+  accountBtn.classList.remove("hidden");
+}
+
+
+
 /* ===== LOGIN SYSTEM ===== */
 function openLogin(){loginModal.classList.remove("hidden")}
 function login(){
@@ -441,13 +591,14 @@ function login(){
   accountBtn.classList.remove("hidden");
 }
 function toggleAccount(){
-  const user=JSON.parse(localStorage.getItem("user"));
-  accountBox.innerHTML=`
+  const user = JSON.parse(localStorage.getItem("user"));
+  accountBox.innerHTML = `
     <p><b>${user.name}</b></p>
     <p>${user.email}</p>
-    <p>Religion: ${user.religion}</p>
-    <p>Caste: ${user.caste}</p>
-    <button onclick="logout()">Logout</button>`;
+    <p>${user.phone}</p>
+    <p>${user.profession}</p>
+    <button onclick="logout()">Logout</button>
+  `;
   accountBox.classList.toggle("hidden");
 }
 function logout(){
