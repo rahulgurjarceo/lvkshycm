@@ -71,8 +71,9 @@ header{
 .hero{
   position:relative;
   height:520px;
-  overflow:hidden;
+  overflow:visible;   /* ✅ ALLOW DROPDOWNS */
 }
+
 .slide{
   position:absolute;inset:0;
   opacity:0;
@@ -97,6 +98,7 @@ header{
 .hero-text{
   max-width:560px;color:#fff;
   animation:fadeUp 1s ease;
+  position:relative;
 }
 .hero-text h1{
   font-size:46px;line-height:1.15;
@@ -144,16 +146,23 @@ header{
 .suggestions{
   position:absolute;
   background:#fff;
-  width:100%;margin-top:6px;
+  width:100%;
+  margin-top:6px;
   border-radius:14px;
   box-shadow:var(--shadow-soft);
-  max-height:260px;overflow:auto;
+  max-height:260px;
+  overflow:auto;
   animation:fadeUp .3s ease;
+  z-index:9999;         /* ✅ FIX overlap issue */
 }
+
 .suggestions div{
   padding:12px 16px;
   cursor:pointer;
+  color:#0f172a;        /* ✅ FIX text color */
+  font-weight:500;
 }
+
 .suggestions div:hover{
   background:#f1f5f9;
 }
@@ -317,6 +326,90 @@ header{
   color:#1e293b;
 }
 
+.services-menu{
+  position:relative;
+}
+
+.service-dropdown{
+  position:absolute;
+  top:72px;
+  left:0;
+  width:100vw;
+  background:#fff;
+  box-shadow:0 20px 40px rgba(0,0,0,.12);
+  z-index:99999;
+  padding:30px 60px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:40px;
+  animation:megaFade .3s ease;
+}
+
+@keyframes megaFade{
+  from{opacity:0;transform:translateY(-10px)}
+  to{opacity:1;transform:none}
+}
+
+.mega-col h4{
+  font-size:8px;
+  margin-bottom:12px;
+  color:#2563eb;
+}
+
+.mega-col div{
+  font-size:5px;
+  padding:6px 0;
+  cursor:pointer;
+  color:#334155;
+}
+
+.mega-col div:hover{
+  color:#2563eb;
+}
+
+
+.service-dropdown button{
+  width:100%;
+  padding:12px 16px;
+  text-align:left;
+  background:none;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.service-dropdown button:hover{
+  background:#f1f5f9;
+}
+
+.category{
+  border-bottom:1px solid #e5e7eb;
+}
+
+.category-title{
+  padding:12px 16px;
+  font-weight:700;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+}
+
+.category-items{
+  padding-left:16px;
+  display:none;
+}
+
+.category-items div{
+  padding:8px 0;
+  font-size:14px;
+  cursor:pointer;
+  color:#334155;
+}
+
+.category-items div:hover{
+  color:#2563eb;
+}
+
 
 
 </style>
@@ -329,7 +422,12 @@ header{
   <div class="header-inner">
     <div class="brand">Yojana <span>Connect</span> Mitra</div>
     <div class="nav">
-      <button onclick="scrollToServices()">Services</button>
+     <div class="services-menu">
+  <button onclick="toggleServiceMenu()">Services ⬇</button>
+  <div id="serviceDropdown" class="service-dropdown hidden"></div>
+
+</div>
+
       <button id="loginBtn" onclick="openLogin()">Login</button>
       <button id="accountBtn" class="hidden" onclick="toggleAccount()">Account</button>
     </div>
@@ -667,14 +765,61 @@ input.addEventListener("input",()=>{
   const q=input.value.toLowerCase();
   if(!q){sug.classList.add("hidden");return;}
   sug.innerHTML="";
-  SERVICES.filter(s=>s.title.toLowerCase().includes(q)).slice(0,6).forEach(s=>{
-    const d=document.createElement("div");
-    d.textContent=s.title;
-    sug.appendChild(d);
-  });
+ SERVICES.filter(s=>s.title.toLowerCase().includes(q)).slice(0,6).forEach(s=>{
+  const d=document.createElement("div");
+  d.textContent=s.title;
+  d.onclick = ()=>{
+    input.value = s.title;
+    runSearch();
+  };
+  sug.appendChild(d);
+});
+
   sug.classList.remove("hidden");
 });
 
+input.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    runSearch();
+  }
+});
+
+
+function runSearch(){
+  const q = input.value.toLowerCase().trim();
+  if(!q) return;
+
+  const results = SERVICES.filter(s =>
+    s.title.toLowerCase().includes(q)
+  );
+
+  grid.innerHTML = "";
+  if(results.length === 0){
+  grid.innerHTML = "<p style='grid-column:1/-1;text-align:center;color:#64748b'>No services found</p>";
+  return;
+}
+results.forEach(s=>{
+
+    const c = document.createElement("div");
+    c.className = "service-card";
+    c.innerHTML = `
+      <div class="badge">${s.badge}</div>
+      <div class="service-icon">${s.icon}</div>
+      <div class="service-title">${s.title}</div>
+    `;
+    grid.appendChild(c);
+  });
+
+  document.getElementById("services")
+    .scrollIntoView({behavior:"smooth"});
+
+  sug.classList.add("hidden");
+}
+document.addEventListener("click", (e)=>{
+  if(!e.target.closest(".search-box") && !e.target.closest(".suggestions")){
+    sug.classList.add("hidden");
+  }
+});
 
 
 
@@ -832,6 +977,70 @@ if(localStorage.getItem("user")){
 function viewAllServices(){
   renderServices(); // show all
 }
+
+const dropdown = document.getElementById("serviceDropdown");
+
+const CATEGORIES = {
+  A:"DOCUMENT & CERTIFICATE SERVICES",
+  B:"SCHOLARSHIP SERVICES",
+  C:"PENSION & SOCIAL WELFARE",
+  D:"FARMER & RURAL SERVICES",
+  E:"JOB, EXAM & EDUCATION",
+  F:"DIGITAL & BUSINESS SERVICES"
+};
+
+function toggleServiceMenu(){
+  const btn = document.querySelector(".services-menu button");
+  const isOpen = !dropdown.classList.contains("hidden");
+
+  dropdown.classList.toggle("hidden");
+  renderCategoryMenu();
+
+  btn.innerHTML = isOpen ? "Services ⬇" : "Services ⬆";
+}
+
+function toggleServiceMenu(){
+  dropdown.classList.toggle("hidden");
+  renderMegaMenu();
+}
+
+function renderMegaMenu(){
+  dropdown.innerHTML = "";
+
+  Object.entries(CATEGORIES).forEach(([cat,label])=>{
+    const col = document.createElement("div");
+    col.className = "mega-col";
+
+    const h = document.createElement("h4");
+    h.textContent = label;
+    col.appendChild(h);
+
+    SERVICES.filter(s=>s.category===cat).forEach(s=>{
+      const item = document.createElement("div");
+      item.textContent = s.title;
+      item.onclick = ()=>{
+        dropdown.classList.add("hidden");
+        runSearchFromService(s.title);
+      };
+      col.appendChild(item);
+    });
+
+    dropdown.appendChild(col);
+  });
+}
+
+
+function runSearchFromService(text){
+  input.value = text;
+  runSearch();
+}
+
+
+
+
+
+
+
 
 </script>
 
