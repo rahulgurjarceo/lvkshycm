@@ -331,19 +331,15 @@ header{
 }
 
 .service-dropdown{
-  position:absolute;
+  position:fixed;
   top:72px;
   left:0;
   width:100vw;
   background:#fff;
   box-shadow:0 20px 40px rgba(0,0,0,.12);
   z-index:99999;
-  padding:30px 60px;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:40px;
-  animation:megaFade .3s ease;
 }
+
 
 @keyframes megaFade{
   from{opacity:0;transform:translateY(-10px)}
@@ -409,6 +405,15 @@ header{
 .category-items div:hover{
   color:#2563eb;
 }
+.service-overlay{
+  position:fixed;
+  top:72px;            /* below header */
+  left:0;
+  width:100vw;
+  height:100vh;
+  background:rgba(0,0,0,0.05); /* transparent like Policybazaar */
+  z-index:99998;
+}
 
 
 
@@ -419,8 +424,14 @@ header{
 
 <!-- ===================== HEADER ===================== -->
 <header>
+  <div id="serviceOverlay" class="service-overlay hidden"></div>
+
   <div class="header-inner">
-    <div class="brand">Yojana <span>Connect</span> Mitra</div>
+    <div class="brand" style="display:flex;align-items:center;gap:10px;">
+  <img src="logo.png" alt="YCM Logo" style="height:42px;">
+  <div>Yojana <span>Connect</span> Mitra</div>
+</div>
+
     <div class="nav">
      <div class="services-menu">
   <button onclick="toggleServiceMenu()">Services ⬇</button>
@@ -428,7 +439,11 @@ header{
 
 </div>
 
-      <button id="loginBtn" onclick="openLogin()">Login</button>
+      <button onclick="goHome()" title="Home" style="font-size:18px;">🏠</button>
+
+<button id="loginBtn" onclick="openLogin()">Login</button>
+<button id="accountBtn" class="hidden" onclick="toggleAccount()">Account</button>
+
       <button id="accountBtn" class="hidden" onclick="toggleAccount()">Account</button>
     </div>
   </div>
@@ -456,6 +471,42 @@ header{
   </div>
 
   <div class="hero-dots" id="heroDots"></div>
+</section>
+<section id="serviceWorkspace" class="hidden" style="height:calc(100vh - 72px);display:flex;">
+  
+  <!-- LEFT: AI GUIDE -->
+  <div id="aiGuide" style="
+    width:35%;
+    padding:30px;
+    background:#f8fafc;
+    overflow-y:auto;
+    border-right:1px solid #e5e7eb;
+  ">
+    <h2 id="guideTitle">Service Guide</h2>
+    <ol id="guideSteps"></ol>
+<div id="serviceActions"></div>
+
+
+    <div style="margin-top:20px;">
+      <b>Need Help?</b>
+      <p>📞 Agent Support: <b>+91 6378642802</b></p>
+      <p>💬 WhatsApp Available</p>
+    </div>
+    <button onclick="goHome()" style="
+  margin-top:20px;
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:2px solid #2563eb;
+  background:#fff;
+  font-weight:700;
+">
+⬅ Back to Home
+</button>
+
+  </div>
+
+
 </section>
 
 <!-- ===================== SERVICES ===================== -->
@@ -622,120 +673,198 @@ setInterval(()=>showSlide((slideIndex+1)%slides.length),5000);
 /* ===== SERVICES ===== */
 const SERVICES = [
 
-/* 🔹 A. DOCUMENT & CERTIFICATE SERVICES (1–20) */
-{ title:"Caste Certificate Online Apply", badge:"Document Service", icon:"📄", category:"A" },
-{ title:"Income Certificate Online Apply", badge:"Document Service", icon:"💼", category:"A" },
-{ title:"Domicile / Residence Certificate", badge:"Document Service", icon:"🏠", category:"A" },
-{ title:"Jan Aadhaar Card Registration", badge:"Govt ID", icon:"🆔", category:"A" },
-{ title:"Jan Aadhaar Card Correction", badge:"Correction", icon:"✏️", category:"A" },
-{ title:"Birth Certificate Online Apply", badge:"Vital Record", icon:"👶", category:"A" },
-{ title:"Death Certificate Online Apply", badge:"Vital Record", icon:"⚰️", category:"A" },
-{ title:"Marriage Certificate Registration", badge:"Legal Document", icon:"💍", category:"A" },
-{ title:"Bonafide Certificate Apply", badge:"Education", icon:"🎓", category:"A" },
-{ title:"Character Certificate Apply", badge:"Police Verified", icon:"🛂", category:"A" },
-{ title:"Minority Certificate Apply", badge:"Community", icon:"🕌", category:"A" },
-{ title:"EWS Certificate Apply", badge:"Reservation", icon:"📑", category:"A" },
-{ title:"OBC Certificate Apply", badge:"Reservation", icon:"📘", category:"A" },
-{ title:"SC Certificate Apply", badge:"Reservation", icon:"📕", category:"A" },
-{ title:"ST Certificate Apply", badge:"Reservation", icon:"📗", category:"A" },
-{ title:"Aadhaar Address Update", badge:"UIDAI", icon:"🏷️", category:"A" },
-{ title:"Aadhaar Name / DOB Correction", badge:"UIDAI", icon:"📝", category:"A" },
-{ title:"Ration Card Apply / Correction", badge:"Food Security", icon:"🍚", category:"A" },
-{ title:"Voter ID Apply / Correction", badge:"Election", icon:"🗳️", category:"A" },
-{ title:"Family ID / Parivar Pehchan", badge:"Family Record", icon:"👪", category:"A" },
+/* Aadhaar – UIDAI */
+{
+  title:"Aadhaar Download",
+  badge:"UIDAI",
+  icon:"🆔",
+  category:"A",
+  officialUrl:"https://myaadhaar.uidai.gov.in/genricDownloadAadhaar"
+},
+{
+  title:"Aadhaar Name / DOB Correction",
+  badge:"UIDAI",
+  icon:"📝",
+  category:"A",
+  officialUrl:"https://myaadhaar.uidai.gov.in"
+},
+{
+  title:"Aadhaar Address Update",
+  badge:"UIDAI",
+  icon:"🏷️",
+  category:"A",
+  officialUrl:"https://myaadhaar.uidai.gov.in"
+},
 
-/* 🔹 B. SCHOLARSHIP SERVICES (21–35) */
-{ title:"Rajasthan Scholarship Apply", badge:"Scholarship", icon:"🎓", category:"B" },
-{ title:"NSP Scholarship Apply", badge:"Central Govt", icon:"🏛️", category:"B" },
-{ title:"SC Scholarship Apply", badge:"Scholarship", icon:"📚", category:"B" },
-{ title:"ST Scholarship Apply", badge:"Scholarship", icon:"📖", category:"B" },
-{ title:"OBC Scholarship Apply", badge:"Scholarship", icon:"📘", category:"B" },
-{ title:"Minority Scholarship Guide", badge:"Scholarship", icon:"🕌", category:"B" },
-{ title:"CM Higher Education Scholarship", badge:"State Scheme", icon:"🏫", category:"B" },
-{ title:"Pre-Matric Scholarship", badge:"School Level", icon:"✏️", category:"B" },
-{ title:"Post-Matric Scholarship", badge:"College Level", icon:"🎒", category:"B" },
-{ title:"Girls Scholarship Scheme", badge:"Women Empowerment", icon:"👧", category:"B" },
-{ title:"Disabled Student Scholarship", badge:"Divyang", icon:"♿", category:"B" },
-{ title:"Labor Card Scholarship", badge:"Worker Welfare", icon:"🛠️", category:"B" },
-{ title:"Farmer Children Scholarship", badge:"Agriculture", icon:"🌾", category:"B" },
-{ title:"Scholarship Renewal", badge:"Renewal", icon:"🔁", category:"B" },
-{ title:"Scholarship Status Check", badge:"Tracking", icon:"🔍", category:"B" },
+/* Caste / Income / Domicile (State Portals – Example Rajasthan) */
+{
+  title:"Caste Certificate Online Apply",
+  badge:"Document Service",
+  icon:"📄",
+  category:"A",
+  officialUrl:"https://pehchan.raj.nic.in"
+},
+{
+  title:"Income Certificate Online Apply",
+  badge:"Document Service",
+  icon:"💼",
+  category:"A",
+  officialUrl:"https://pehchan.raj.nic.in"
+},
+{
+  title:"Domicile / Residence Certificate",
+  badge:"Document Service",
+  icon:"🏠",
+  category:"A",
+  officialUrl:"https://pehchan.raj.nic.in"
+},
 
-/* 🔹 C. PENSION & SOCIAL WELFARE (36–50) */
-{ title:"Old Age Pension Apply", badge:"Pension", icon:"👴", category:"C" },
-{ title:"Widow Pension Apply", badge:"Women Welfare", icon:"👩‍🦳", category:"C" },
-{ title:"Disabled Pension Apply", badge:"Divyang", icon:"♿", category:"C" },
-{ title:"Palanhar Yojana", badge:"Child Care", icon:"👶", category:"C" },
-{ title:"Silicosis Sahayata Yojana", badge:"Medical Aid", icon:"🏥", category:"C" },
-{ title:"CM Anuprati Coaching", badge:"Education", icon:"📘", category:"C" },
-{ title:"CM Kanyadan Yojana", badge:"Marriage Aid", icon:"💒", category:"C" },
-{ title:"Sukanya Samriddhi Yojana", badge:"Girl Child", icon:"👧", category:"C" },
-{ title:"Ayushman Bharat Card", badge:"Health Scheme", icon:"❤️", category:"C" },
-{ title:"BPL Card Apply", badge:"Poverty Relief", icon:"📄", category:"C" },
-{ title:"Food Security Scheme", badge:"NFSA", icon:"🍛", category:"C" },
-{ title:"Pension Status Check", badge:"Tracking", icon:"🔍", category:"C" },
-{ title:"Pension Objection Solution", badge:"Grievance", icon:"⚖️", category:"C" },
-{ title:"DBT Bank Seeding", badge:"Banking", icon:"🏦", category:"C" },
-{ title:"Family Benefit Scheme", badge:"Social Security", icon:"👪", category:"C" },
+/* Voter ID – ECI */
+{
+  title:"Voter ID Apply / Correction",
+  badge:"Election",
+  icon:"🗳️",
+  category:"A",
+  officialUrl:"https://voters.eci.gov.in"
+},
 
-/* 🔹 D. FARMER & RURAL SERVICES (51–65) */
-{ title:"PM Kisan Yojana Apply", badge:"Farmer Scheme", icon:"🌾", category:"D" },
-{ title:"PM Kisan Correction / Status", badge:"Farmer Scheme", icon:"🔁", category:"D" },
-{ title:"Farmer ID Registration", badge:"Agriculture", icon:"🧑‍🌾", category:"D" },
-{ title:"Soil Health Card", badge:"Agriculture", icon:"🪴", category:"D" },
-{ title:"Crop Insurance Apply", badge:"Insurance", icon:"🌦️", category:"D" },
-{ title:"Kisan Credit Card", badge:"Loan", icon:"💳", category:"D" },
-{ title:"Raj Kisan Subsidy", badge:"Subsidy", icon:"💰", category:"D" },
-{ title:"Agriculture Equipment Subsidy", badge:"Machinery", icon:"🚜", category:"D" },
-{ title:"Livestock Insurance", badge:"Animal Care", icon:"🐄", category:"D" },
-{ title:"Farmer Pension Scheme", badge:"Pension", icon:"👨‍🌾", category:"D" },
-{ title:"Irrigation Subsidy", badge:"Water", icon:"💧", category:"D" },
-{ title:"Dairy Loan Assistance", badge:"Dairy", icon:"🥛", category:"D" },
-{ title:"Farmer Loan Documentation", badge:"Banking", icon:"📑", category:"D" },
-{ title:"e-NAM Registration", badge:"Online Market", icon:"💻", category:"D" },
-{ title:"PM Fasal Bima Claim", badge:"Claim", icon:"📋", category:"D" },
+/* Ration Card – NFSA */
+{
+  title:"Ration Card Apply / Correction",
+  badge:"Food Security",
+  icon:"🍚",
+  category:"A",
+  officialUrl:"https://nfsa.gov.in"
+},
+{
+  title:"NSP Scholarship Apply",
+  badge:"Central Govt",
+  icon:"🏛️",
+  category:"B",
+  officialUrl:"https://scholarships.gov.in"
+},
+{
+  title:"Scholarship Status Check",
+  badge:"Tracking",
+  icon:"🔍",
+  category:"B",
+  officialUrl:"https://scholarships.gov.in"
+},
+{
+  title:"Rajasthan Scholarship Apply",
+  badge:"Scholarship",
+  icon:"🎓",
+  category:"B",
+  officialUrl:"https://sje.rajasthan.gov.in"
+},
+{
+  title:"Old Age Pension Apply",
+  badge:"Pension",
+  icon:"👴",
+  category:"C",
+  officialUrl:"https://ssp.rajasthan.gov.in"
+},
+{
+  title:"Widow Pension Apply",
+  badge:"Women Welfare",
+  icon:"👩‍🦳",
+  category:"C",
+  officialUrl:"https://ssp.rajasthan.gov.in"
+},
+{
+  title:"Ayushman Bharat Card",
+  badge:"Health Scheme",
+  icon:"❤️",
+  category:"C",
+  officialUrl:"https://beneficiary.nha.gov.in"
+},
+{
+  title:"PM Kisan Yojana Apply",
+  badge:"Farmer Scheme",
+  icon:"🌾",
+  category:"D",
+  officialUrl:"https://pmkisan.gov.in"
+},
+{
+  title:"PM Fasal Bima Claim",
+  badge:"Claim",
+  icon:"📋",
+  category:"D",
+  officialUrl:"https://pmfby.gov.in"
+},
+{
+  title:"Soil Health Card",
+  badge:"Agriculture",
+  icon:"🪴",
+  category:"D",
+  officialUrl:"https://soilhealth.dac.gov.in"
+},
+{
+  title:"SSC Online Apply",
+  badge:"Central Exam",
+  icon:"🏛️",
+  category:"E",
+  officialUrl:"https://ssc.nic.in"
+},
+{
+  title:"Railway Form Apply",
+  badge:"Recruitment",
+  icon:"🚆",
+  category:"E",
+  officialUrl:"https://www.rrbapply.gov.in"
+},
+{
+  title:"Admit Card Download",
+  badge:"Exam",
+  icon:"📄",
+  category:"E",
+  officialUrl:"https://ssc.nic.in"
+},
+{
+  title:"PAN Card Apply",
+  badge:"Tax Service",
+  icon:"🆔",
+  category:"F",
+  officialUrl:"https://www.onlineservices.nsdl.com/paam/endUserRegisterContact.html"
+},
+{
+  title:"GST Registration",
+  badge:"Business",
+  icon:"📊",
+  category:"F",
+  officialUrl:"https://www.gst.gov.in"
+},
+{
+  title:"MSME / Udyam Registration",
+  badge:"Business",
+  icon:"🏭",
+  category:"F",
+  officialUrl:"https://udyamregistration.gov.in"
+},
+{
+  title:"Passport Apply",
+  badge:"Travel",
+  icon:"🛂",
+  category:"F",
+  officialUrl:"https://www.passportindia.gov.in"
+}
 
-/* 🔹 E. JOB, EXAM & EDUCATION (66–80) */
-{ title:"Rajasthan Police Form", badge:"Recruitment", icon:"👮", category:"E" },
-{ title:"SSC Online Apply", badge:"Central Exam", icon:"🏛️", category:"E" },
-{ title:"Railway Form Apply", badge:"Recruitment", icon:"🚆", category:"E" },
-{ title:"Army Agniveer Apply", badge:"Defence", icon:"🪖", category:"E" },
-{ title:"CET Exam Apply", badge:"Entrance Exam", icon:"📝", category:"E" },
-{ title:"Teacher Recruitment", badge:"Education", icon:"👩‍🏫", category:"E" },
-{ title:"ITI Admission Apply", badge:"Technical", icon:"🛠️", category:"E" },
-{ title:"Polytechnic Admission", badge:"Diploma", icon:"🏗️", category:"E" },
-{ title:"College Admission Form", badge:"Higher Education", icon:"🎓", category:"E" },
-{ title:"Online Exam Correction", badge:"Correction", icon:"✏️", category:"E" },
-{ title:"Admit Card Download", badge:"Exam", icon:"📄", category:"E" },
-{ title:"Result / Merit List", badge:"Result", icon:"📊", category:"E" },
-{ title:"Education Loan Assistance", badge:"Loan", icon:"🏦", category:"E" },
-{ title:"Skill Development Scheme", badge:"Training", icon:"🧠", category:"E" },
-{ title:"Rojgar Panjiyan", badge:"Employment", icon:"💼", category:"E" },
 
-/* 🔹 F. DIGITAL & BUSINESS SERVICES (81–101) */
-{ title:"PAN Card Apply", badge:"Tax Service", icon:"🆔", category:"F" },
-{ title:"PAN Card Correction", badge:"Correction", icon:"✏️", category:"F" },
-{ title:"GST Registration", badge:"Business", icon:"📊", category:"F" },
-{ title:"MSME / Udyam Registration", badge:"Business", icon:"🏭", category:"F" },
-{ title:"Company Incorporation", badge:"Corporate", icon:"🏢", category:"F" },
-{ title:"Firm Registration", badge:"Business", icon:"📜", category:"F" },
-{ title:"Bank Account Opening", badge:"Banking", icon:"🏦", category:"F" },
-{ title:"AEPS Cash Withdrawal", badge:"Banking", icon:"💳", category:"F" },
-{ title:"Money Transfer", badge:"Finance", icon:"💸", category:"F" },
-{ title:"Bill Payment Service", badge:"Utility", icon:"🧾", category:"F" },
-{ title:"Mobile / DTH Recharge", badge:"Utility", icon:"📱", category:"F" },
-{ title:"Insurance Assistance", badge:"Policy Support", icon:"📑", category:"F" },
-{ title:"Digital Signature (DSC)", badge:"Legal", icon:"✍️", category:"F" },
-{ title:"E-Stamp / Notary", badge:"Legal", icon:"⚖️", category:"F" },
-{ title:"Online Complaint Filing", badge:"Grievance", icon:"📢", category:"F" },
-{ title:"RTI Online Apply", badge:"Information", icon:"📬", category:"F" },
-{ title:"Passport Apply", badge:"Travel", icon:"🛂", category:"F" },
-{ title:"Driving Licence Service", badge:"Transport", icon:"🚘", category:"F" },
-{ title:"Vehicle RC Services", badge:"Transport", icon:"🚗", category:"F" },
-{ title:"Form Print & Scan", badge:"Documentation", icon:"🖨️", category:"F" },
-{ title:"YCM Agent Registration", badge:"Become Partner", icon:"🤝", category:"F" }
+
 
 ];
+
+const SERVICE_GUIDES = {
+  "Aadhaar Download": [
+    "Open UIDAI official website",
+    "Click on Download Aadhaar",
+    "Enter Aadhaar Number / VID / Enrollment ID",
+    "Verify OTP sent to registered mobile",
+    "Download Aadhaar PDF",
+    "Password: First 4 letters of name + Year of birth"
+  ]
+};
+
 
 
 const grid = document.getElementById("serviceGrid");
@@ -751,9 +880,14 @@ function renderServices(limit = SERVICES.length){
       <div class="service-icon">${s.icon}</div>
       <div class="service-title">${s.title}</div>
     `;
+
+    // ✅ OPEN SERVICE WORKSPACE ON CLICK
+    c.onclick = () => openServiceWorkspace(s);
+
     grid.appendChild(c);
   });
 }
+
 
 renderServices(HOME_LIMIT);
 
@@ -785,21 +919,39 @@ input.addEventListener("keydown", (e)=>{
 });
 
 
+function normalizeText(text){
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, "")   // remove symbols
+    .replace(/\s+/g, " ")         // extra spaces
+    .trim();
+}
+
+function isSmartMatch(serviceTitle, query){
+  const title = normalizeText(serviceTitle);
+  const words = normalizeText(query).split(" ");
+
+  // every word should exist somewhere (any order)
+  return words.every(w => title.includes(w));
+}
+
 function runSearch(){
-  const q = input.value.toLowerCase().trim();
+  const q = input.value.trim();
   if(!q) return;
 
   const results = SERVICES.filter(s =>
-    s.title.toLowerCase().includes(q)
+    isSmartMatch(s.title, q)
   );
 
   grid.innerHTML = "";
-  if(results.length === 0){
-  grid.innerHTML = "<p style='grid-column:1/-1;text-align:center;color:#64748b'>No services found</p>";
-  return;
-}
-results.forEach(s=>{
 
+  if(results.length === 0){
+    grid.innerHTML =
+      "<p style='grid-column:1/-1;text-align:center;color:#64748b'>No services found</p>";
+    return;
+  }
+
+  results.forEach(s=>{
     const c = document.createElement("div");
     c.className = "service-card";
     c.innerHTML = `
@@ -807,6 +959,7 @@ results.forEach(s=>{
       <div class="service-icon">${s.icon}</div>
       <div class="service-title">${s.title}</div>
     `;
+    c.onclick = () => openServiceWorkspace(s);
     grid.appendChild(c);
   });
 
@@ -815,6 +968,7 @@ results.forEach(s=>{
 
   sug.classList.add("hidden");
 }
+
 document.addEventListener("click", (e)=>{
   if(!e.target.closest(".search-box") && !e.target.closest(".suggestions")){
     sug.classList.add("hidden");
@@ -938,18 +1092,7 @@ function closeLogin(){
   loginModal.classList.remove("active");
 }
 
-function login(){
-  const user={
-    name:uName.value,
-    email:uEmail.value,
-    religion:uReligion.value,
-    caste:uCaste.value
-  };
-  localStorage.setItem("user",JSON.stringify(user));
-  loginModal.classList.add("hidden");
-  loginBtn.classList.add("hidden");
-  accountBtn.classList.remove("hidden");
-}
+
 function toggleAccount(){
   const user = JSON.parse(localStorage.getItem("user"));
   accountBox.innerHTML = `
@@ -974,6 +1117,17 @@ if(localStorage.getItem("user")){
   accountBtn.classList.remove("hidden");
 }
 
+// HOME DEFAULT VIEW (NO AI, NO SPLIT)
+function showHome(){
+  document.getElementById("serviceWorkspace").classList.add("hidden");
+  document.querySelector(".hero").style.display = "block";
+  document.getElementById("services").style.display = "block";
+}
+
+showHome();
+
+
+
 function viewAllServices(){
   renderServices(); // show all
 }
@@ -989,20 +1143,40 @@ const CATEGORIES = {
   F:"DIGITAL & BUSINESS SERVICES"
 };
 
+
+const overlay = document.getElementById("serviceOverlay");
+
 function toggleServiceMenu(){
-  const btn = document.querySelector(".services-menu button");
+
   const isOpen = !dropdown.classList.contains("hidden");
 
-  dropdown.classList.toggle("hidden");
-  renderCategoryMenu();
-
-  btn.innerHTML = isOpen ? "Services ⬇" : "Services ⬆";
+  if(isOpen){
+    closeServiceMenu();
+  }else{
+    openServiceMenu();
+  }
 }
 
-function toggleServiceMenu(){
-  dropdown.classList.toggle("hidden");
+function openServiceMenu(){
   renderMegaMenu();
+  dropdown.classList.remove("hidden");
+  overlay.classList.remove("hidden");
+  document.body.style.overflow = "hidden"; // lock scroll
 }
+
+function closeServiceMenu(){
+  dropdown.classList.add("hidden");
+  overlay.classList.add("hidden");
+  document.body.style.overflow = ""; // unlock scroll
+}
+overlay.addEventListener("click", closeServiceMenu);
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape"){
+    closeServiceMenu();
+  }
+});
+
+
 
 function renderMegaMenu(){
   dropdown.innerHTML = "";
@@ -1031,18 +1205,134 @@ function renderMegaMenu(){
 
 
 function runSearchFromService(text){
-  input.value = text;
-  runSearch();
+  const service = SERVICES.find(s => s.title === text);
+  if(service){
+    closeServiceMenu();
+    openServiceWorkspace(service);
+  }
 }
 
 
 
+function openServiceWorkspace(service){
 
+  // hide home
+  document.querySelector(".hero").classList.add("hidden");
+  document.getElementById("services").classList.add("hidden");
+
+  // show workspace
+  const workspace = document.getElementById("serviceWorkspace");
+  workspace.classList.remove("hidden");
+
+  // TITLE
+  document.getElementById("guideTitle").innerText = service.title;
+
+  // STEPS
+  const stepsBox = document.getElementById("guideSteps");
+  stepsBox.innerHTML = "";
+
+  const steps =
+    SERVICE_GUIDES[service.title] ||
+    ["Step-by-step guide will appear here"];
+
+  steps.forEach(step=>{
+    const li = document.createElement("li");
+    li.textContent = step;
+    stepsBox.appendChild(li);
+  });
+
+  const actionBox = document.getElementById("serviceActions");
+actionBox.innerHTML = `
+  <div style="margin-top:30px">
+
+    <button onclick="window.open('${service.officialUrl}','_blank')"
+      style="width:100%;padding:14px;margin-bottom:12px;
+      background:#2563eb;color:#fff;border:none;border-radius:12px;">
+      🔗 Go to Official Website
+    </button>
+
+    <button onclick="unlockAI('${service.title}')"
+      style="width:100%;padding:14px;margin-bottom:12px;
+      background:#22c55e;color:#fff;border:none;border-radius:12px;">
+      🤖 Ask AI Assistant (₹1)
+    </button>
+
+    <button onclick="contactAgent('${service.title}')"
+      style="width:100%;padding:14px;
+      background:#f59e0b;color:#000;border:none;border-radius:12px;">
+      👨‍💼 Contact Agent (₹25)
+    </button>
+
+  </div>
+`;
+
+}
+
+
+function closeServiceWorkspace(){
+  // hide workspace
+  document.getElementById("serviceWorkspace").classList.add("hidden");
+
+  // restore home
+  document.querySelector(".hero").classList.remove("hidden");
+  document.getElementById("services").classList.remove("hidden");
+
+  // stop iframe
+  document.getElementById("serviceFrame").src = "";
+}
+
+function unlockAI(service){
+  alert("₹1 payment required to unlock AI for: " + service);
+  // future: Razorpay / Wallet / UPI integration
+}
+function contactAgent(service){
+  alert("Our agent will assist you for ₹25.\nService: " + service);
+  // future: lead create + WhatsApp + CRM
+}
+
+document.addEventListener("click", function(e){
+  const menu = document.querySelector(".services-menu");
+  if (!menu.contains(e.target)) {
+    dropdown.classList.add("hidden");
+  }
+});
 
 
 
 
 </script>
+
+<script>
+function goHome(){
+  showHome();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+</script>
+
+<!-- ===================== SERVICE START MODAL ===================== -->
+<div id="serviceStartModal" class="modal hidden">
+  <div class="modal-box">
+    <span class="close-btn" onclick="closeServiceStart()">✕</span>
+    <h2 id="serviceFormTitle">Start Service</h2>
+
+    <div class="form-grid">
+      <input id="svcName" placeholder="पूरा नाम">
+      <input id="svcMobile" placeholder="Mobile Number">
+
+      <input id="svcState" placeholder="State">
+      <input id="svcBlock" placeholder="Block / Tehsil">
+      <input id="svcVillage" placeholder="Village / City">
+
+      <select id="svcCountry">
+        <option value="India">India</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <button onclick="startServiceFlow()">Continue</button>
+  </div>
+</div>
 
 </body>
 </html>
