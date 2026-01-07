@@ -175,20 +175,22 @@ header{
 
 .service-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:26px;
+  grid-template-columns:repeat(7, 1fr); /* 🔥 7 boxes in one row */
+  gap:14px;
 }
-.service-card{
-  background:var(--card);
-  padding:26px;border-radius:20px;
-  box-shadow:var(--shadow-soft);
-  transition:.4s var(--ease);
-  cursor:pointer;
+
+/* Responsive fallback */
+@media (max-width:1200px){
+  .service-grid{grid-template-columns:repeat(5,1fr);}
 }
-.service-card:hover{
-  transform:translateY(-10px) scale(1.02);
-  box-shadow:var(--shadow);
+@media (max-width:900px){
+  .service-grid{grid-template-columns:repeat(3,1fr);}
 }
+@media (max-width:600px){
+  .service-grid{grid-template-columns:repeat(2,1fr);}
+}
+
+
 
 /* ===================== LOGIN MODAL ===================== */
 .modal{
@@ -293,14 +295,6 @@ header{
   cursor:pointer;
   font-weight:bold;
 }
-.service-card{
-  background:#f1f7ff;
-  border-radius:18px;
-  padding:22px;
-  position:relative;
-  text-align:center;
-  cursor:pointer;
-}
 
 .service-card .badge{
   position:absolute;
@@ -315,16 +309,32 @@ header{
   font-weight:600;
 }
 
+
+.service-card{
+  background:#f1f7ff;
+  border-radius:14px;
+  padding:14px 10px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 6px 16px rgba(0,0,0,.06);
+  transition:.3s ease;
+}
+
+.service-card:hover{
+  transform:translateY(-6px);
+}
+
 .service-icon{
-  font-size:44px;
-  margin-bottom:14px;
+  font-size:28px;
+  margin-bottom:8px;
 }
 
 .service-title{
-  font-size:16px;
-  font-weight:700;
-  color:#1e293b;
+  font-size:13px;
+  font-weight:600;
+  line-height:1.3;
 }
+
 
 .services-menu{
   position:relative;
@@ -335,9 +345,23 @@ header{
   top:72px;
   left:0;
   width:100vw;
-  background:#fff;
+  background:#ffffff;
   box-shadow:0 20px 40px rgba(0,0,0,.12);
   z-index:99999;
+
+  pointer-events:none;   /* outside click → overlay */
+}
+
+.service-dropdown .mega-box{
+  pointer-events:auto;
+
+  max-width:1300px;
+  margin:0 auto;
+  padding:40px 80px;
+
+  display:grid;                          /* ✅ GRID HERE */
+  grid-template-columns:repeat(3,1fr);  /* ✅ COLUMNS */
+  gap:40px;
 }
 
 
@@ -347,13 +371,13 @@ header{
 }
 
 .mega-col h4{
-  font-size:8px;
+  font-size:14px;
   margin-bottom:12px;
   color:#2563eb;
 }
 
 .mega-col div{
-  font-size:5px;
+  font-size:10px;
   padding:6px 0;
   cursor:pointer;
   color:#334155;
@@ -414,6 +438,180 @@ header{
   background:rgba(0,0,0,0.05); /* transparent like Policybazaar */
   z-index:99998;
 }
+#serviceWorkspace{
+  display:flex;
+}
+#serviceWorkspace.hidden{
+  display:none;
+}
+.services-layout{
+  display:grid;
+  grid-template-columns:260px 1fr 260px;
+  gap:24px;
+  align-items:start;
+}
+
+.side-box{
+  background:#fff;
+  border-radius:16px;
+  padding:18px;
+  box-shadow:0 10px 24px rgba(0,0,0,.06);
+}
+
+.side-box h3{
+  font-size:16px;
+  margin-bottom:12px;
+  color:#2563eb;
+}
+
+/* Latest News */
+.news-list{
+  list-style:none;
+}
+.news-list li{
+  font-size:14px;
+  padding:8px 0;
+  border-bottom:1px dashed #e5e7eb;
+}
+
+/* Quick Links */
+.scroll-box{
+  max-height:420px;
+  overflow-y:auto;   /* 🔥 UP–DOWN scroll */
+}
+
+.quick-links a{
+  display:block;
+  padding:10px 12px;
+  font-size:14px;
+  border-radius:10px;
+  margin-bottom:6px;
+  background:#f1f5f9;
+}
+.quick-links a:hover{
+  background:#2563eb;
+  color:#fff;
+}
+
+/* Responsive */
+@media (max-width:1100px){
+  .services-layout{
+    grid-template-columns:1fr;
+  }
+}
+/* ===================== FULL WIDTH HOME SERVICES ===================== */
+.container-fluid{
+  width:100%;
+  max-width:none;          /* 🔥 remove center limit */
+  padding:0 24px;          /* minimal left-right gap */
+}
+
+/* Slightly more breathing space on big screens */
+@media (min-width:1600px){
+  .container-fluid{
+    padding:0 40px;
+  }
+}
+/* ===================== FOOTER ===================== */
+footer{
+  background:#0f172a;
+  color:#e5e7eb;
+  margin-top:80px;
+}
+
+.footer-top{
+  padding:60px 24px;
+}
+
+.footer-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1.2fr;
+  gap:40px;
+  max-width:1400px;
+  margin:auto;
+}
+
+.footer-logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:20px;
+  font-weight:900;
+  margin-bottom:12px;
+}
+.footer-logo span{color:#38bdf8}
+
+.footer-about{
+  font-size:14px;
+  line-height:1.6;
+  color:#cbd5f5;
+}
+
+.footer-col h4{
+  margin-bottom:14px;
+  font-size:15px;
+  color:#ffffff;
+}
+
+.footer-links a{
+  display:block;
+  font-size:14px;
+  margin-bottom:10px;
+  color:#cbd5f5;
+}
+.footer-links a:hover{
+  color:#38bdf8;
+}
+
+.footer-contact p{
+  font-size:14px;
+  margin-bottom:10px;
+  color:#cbd5f5;
+}
+
+/* Social Icons */
+.social-links{
+  display:flex;
+  gap:12px;
+  margin-top:12px;
+}
+.social-links a{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:#1e293b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+}
+.social-links a:hover{
+  background:#38bdf8;
+  color:#0f172a;
+}
+
+/* Footer Bottom */
+.footer-bottom{
+  border-top:1px solid #1e293b;
+  padding:18px 24px;
+  text-align:center;
+  font-size:13px;
+  color:#94a3b8;
+}
+
+/* Responsive */
+@media (max-width:900px){
+  .footer-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+@media (max-width:600px){
+  .footer-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+
 
 
 
@@ -435,11 +633,14 @@ header{
     <div class="nav">
      <div class="services-menu">
   <button onclick="toggleServiceMenu()">Services ⬇</button>
-  <div id="serviceDropdown" class="service-dropdown hidden"></div>
+  <div id="serviceDropdown" class="service-dropdown hidden">
+  <div class="mega-box"></div>
+</div>
+
 
 </div>
 
-      <button onclick="goHome()" title="Home" style="font-size:18px;">🏠</button>
+      <button onclick="goHome()" title="Home" style="font-size:18px;">Home</button>
 
 <button id="loginBtn" onclick="openLogin()">Login</button>
 <button id="accountBtn" class="hidden" onclick="toggleAccount()">Account</button>
@@ -472,7 +673,7 @@ header{
 
   <div class="hero-dots" id="heroDots"></div>
 </section>
-<section id="serviceWorkspace" class="hidden" style="height:calc(100vh - 72px);display:flex;">
+<section id="serviceWorkspace" class="hidden" style="height:calc(100vh - 72px);">
   
   <!-- LEFT: AI GUIDE -->
   <div id="aiGuide" style="
@@ -511,12 +712,46 @@ header{
 
 <!-- ===================== SERVICES ===================== -->
 <section class="section" id="services">
-  <div class="container">
-    <h2 class="section-title">All Services</h2>
-    <p class="section-sub">Choose from verified services</p>
-    <div class="service-grid" id="serviceGrid"></div>
+  <div class="container-fluid services-layout">
+
+    <!-- LEFT: Latest News -->
+    <aside class="side-box">
+      <h3>📰 Latest News</h3>
+      <ul class="news-list">
+        <li>✔ Aadhaar update last date extended</li>
+        <li>✔ Scholarship portal reopened</li>
+        <li>✔ PM Kisan 16th installment released</li>
+        <li>✔ New ration card rules 2026</li>
+        <li>✔ Pension verification mandatory</li>
+      </ul>
+    </aside>
+
+    <!-- CENTER: Services -->
+    <main>
+      <h2 class="section-title">All Services</h2>
+      <p class="section-sub">Choose from verified services</p>
+      <div class="service-grid" id="serviceGrid"></div>
+    </main>
+
+    <!-- RIGHT: Quick Links -->
+    <aside class="side-box scroll-box">
+      <h3>⚡ Quick Links</h3>
+      <div class="quick-links">
+        <a href="#">Aadhaar Download</a>
+        <a href="#">PAN Apply</a>
+        <a href="#">Scholarship Status</a>
+        <a href="#">Ration Card</a>
+        <a href="#">Voter ID</a>
+        <a href="#">PM Kisan</a>
+        <a href="#">Ayushman Card</a>
+        <a href="#">Income Certificate</a>
+        <a href="#">Caste Certificate</a>
+      </div>
+    </aside>
+
   </div>
 </section>
+
 
 <div style="text-align:center;margin-top:40px;">
   <button onclick="viewAllServices()"
@@ -627,6 +862,8 @@ header{
 
 <!-- ===================== SCRIPT ===================== -->
 <script>
+  
+
 
 const loginModal = document.getElementById("loginModal");
 const loginBtn = document.getElementById("loginBtn");
@@ -892,66 +1129,27 @@ function renderServices(limit = SERVICES.length){
 renderServices(HOME_LIMIT);
 
 
-/* ===== SEARCH ===== */
-const input=document.getElementById("searchInput");
-const sug=document.getElementById("suggestions");
-input.addEventListener("input",()=>{
-  const q=input.value.toLowerCase();
-  if(!q){sug.classList.add("hidden");return;}
-  sug.innerHTML="";
- SERVICES.filter(s=>s.title.toLowerCase().includes(q)).slice(0,6).forEach(s=>{
-  const d=document.createElement("div");
-  d.textContent=s.title;
-  d.onclick = ()=>{
-    input.value = s.title;
-    runSearch();
-  };
-  sug.appendChild(d);
-});
-
-  sug.classList.remove("hidden");
-});
-
-input.addEventListener("keydown", (e)=>{
-  if(e.key === "Enter"){
-    runSearch();
-  }
-});
 
 
-function normalizeText(text){
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9 ]/g, "")   // remove symbols
-    .replace(/\s+/g, " ")         // extra spaces
-    .trim();
-}
 
-function isSmartMatch(serviceTitle, query){
-  const title = normalizeText(serviceTitle);
-  const words = normalizeText(query).split(" ");
 
-  // every word should exist somewhere (any order)
-  return words.every(w => title.includes(w));
-}
 
-function runSearch(){
-  const q = input.value.trim();
-  if(!q) return;
 
-  const results = SERVICES.filter(s =>
-    isSmartMatch(s.title, q)
-  );
 
+function runSearch() {
+  const q = searchInput.value.trim();
+  if (!q) return;
+
+  const results = advancedSearch(q, SERVICES);
   grid.innerHTML = "";
 
-  if(results.length === 0){
+  if (!results.length) {
     grid.innerHTML =
       "<p style='grid-column:1/-1;text-align:center;color:#64748b'>No services found</p>";
     return;
   }
 
-  results.forEach(s=>{
+  results.forEach(s => {
     const c = document.createElement("div");
     c.className = "service-card";
     c.innerHTML = `
@@ -964,10 +1162,11 @@ function runSearch(){
   });
 
   document.getElementById("services")
-    .scrollIntoView({behavior:"smooth"});
+    .scrollIntoView({ behavior: "smooth" });
 
-  sug.classList.add("hidden");
+  suggestionsBox.classList.add("hidden");
 }
+
 
 document.addEventListener("click", (e)=>{
   if(!e.target.closest(".search-box") && !e.target.closest(".suggestions")){
@@ -1117,12 +1316,16 @@ if(localStorage.getItem("user")){
   accountBtn.classList.remove("hidden");
 }
 
-// HOME DEFAULT VIEW (NO AI, NO SPLIT)
 function showHome(){
-  document.getElementById("serviceWorkspace").classList.add("hidden");
-  document.querySelector(".hero").style.display = "block";
-  document.getElementById("services").style.display = "block";
+  const workspace = document.getElementById("serviceWorkspace");
+
+  workspace.classList.add("hidden");
+  workspace.style.display = "none";   // 🔥 hard reset
+
+  document.querySelector(".hero").classList.remove("hidden");
+  document.getElementById("services").classList.remove("hidden");
 }
+
 
 showHome();
 
@@ -1179,7 +1382,10 @@ document.addEventListener("keydown", (e)=>{
 
 
 function renderMegaMenu(){
-  dropdown.innerHTML = "";
+  const dropdown = document.getElementById("serviceDropdown");
+  const box = dropdown.querySelector(".mega-box");
+
+  box.innerHTML = "";   // clear grid
 
   Object.entries(CATEGORIES).forEach(([cat,label])=>{
     const col = document.createElement("div");
@@ -1192,16 +1398,13 @@ function renderMegaMenu(){
     SERVICES.filter(s=>s.category===cat).forEach(s=>{
       const item = document.createElement("div");
       item.textContent = s.title;
-      item.onclick = ()=>{
-        dropdown.classList.add("hidden");
-        runSearchFromService(s.title);
-      };
       col.appendChild(item);
     });
 
-    dropdown.appendChild(col);
+    box.appendChild(col);   // ✅ goes into grid
   });
 }
+
 
 
 function runSearchFromService(text){
@@ -1216,13 +1419,12 @@ function runSearchFromService(text){
 
 function openServiceWorkspace(service){
 
-  // hide home
   document.querySelector(".hero").classList.add("hidden");
   document.getElementById("services").classList.add("hidden");
 
-  // show workspace
   const workspace = document.getElementById("serviceWorkspace");
   workspace.classList.remove("hidden");
+  workspace.style.display = "flex";
 
   // TITLE
   document.getElementById("guideTitle").innerText = service.title;
@@ -1301,12 +1503,151 @@ document.addEventListener("click", function(e){
 
 
 </script>
+<script>
+/* ========= ADVANCED SEARCH CORE ========= */
+
+function normalize(str) {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function levenshtein(a, b, limit = 1) {
+  if (Math.abs(a.length - b.length) > limit) return limit + 1;
+
+  let dp = Array(b.length + 1).fill(0).map((_, i) => i);
+
+  for (let i = 1; i <= a.length; i++) {
+    let prev = dp[0];
+    dp[0] = i;
+
+    for (let j = 1; j <= b.length; j++) {
+      let temp = dp[j];
+      dp[j] = Math.min(
+        dp[j] + 1,
+        dp[j - 1] + 1,
+        prev + (a[i - 1] === b[j - 1] ? 0 : 1)
+      );
+      prev = temp;
+    }
+  }
+  return dp[b.length];
+}
+
+function advancedSearch(query, list) {
+  const q = normalize(query);
+  if (!q) return [];
+
+  const qWords = q.split(" ");
+
+  return list
+    .map(item => {
+      const text = normalize(
+        `${item.title} ${item.badge || ""} ${item.category || ""}`
+      );
+      const words = text.split(" ");
+      let score = 0;
+
+      if (text.includes(q)) score += 20;
+
+      qWords.forEach(qw => {
+        if (words.includes(qw)) score += 8;
+
+        words.forEach(w => {
+          if (w.startsWith(qw)) score += 4;
+          if (levenshtein(qw, w) <= 1) score += 2;
+        });
+      });
+
+      return { item, score };
+    })
+    .filter(r => r.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map(r => r.item);
+}
+</script>
+<script>
+const searchInput = document.getElementById("searchInput");
+const suggestionsBox = document.getElementById("suggestions");
+let activeIndex = -1;
+
+searchInput.addEventListener("input", () => {
+  const q = searchInput.value.trim();
+  if (!q) {
+    suggestionsBox.classList.add("hidden");
+    return;
+  }
+
+  const results = advancedSearch(q, SERVICES).slice(0, 6);
+  suggestionsBox.innerHTML = "";
+  activeIndex = -1;
+
+  results.forEach(s => {
+    const div = document.createElement("div");
+    div.innerHTML = highlight(s.title, q);
+    div.onclick = () => selectSuggestion(s.title);
+    suggestionsBox.appendChild(div);
+  });
+
+  suggestionsBox.classList.remove("hidden");
+});
+
+searchInput.addEventListener("keydown", e => {
+  const items = suggestionsBox.querySelectorAll("div");
+  if (!items.length) return;
+
+  if (e.key === "ArrowDown") activeIndex = (activeIndex + 1) % items.length;
+  if (e.key === "ArrowUp") activeIndex = (activeIndex - 1 + items.length) % items.length;
+
+  if (e.key === "Enter" && activeIndex >= 0) {
+    selectSuggestion(items[activeIndex].innerText);
+    e.preventDefault();
+  }
+
+  items.forEach((el, i) => {
+    el.style.background = i === activeIndex ? "#f1f5f9" : "";
+  });
+});
+
+function selectSuggestion(text) {
+  searchInput.value = text;
+  suggestionsBox.classList.add("hidden");
+  runSearch();
+}
+
+function highlight(text, q) {
+  const r = new RegExp(`(${q})`, "ig");
+  return text.replace(r, `<b style="color:#2563eb">$1</b>`);
+}
+</script>
+
 
 <script>
 function goHome(){
-  showHome();
+  // 1️⃣ Reset search input
+  searchInput.value = "";
+
+  // 2️⃣ Hide suggestions
+  suggestionsBox.classList.add("hidden");
+
+  // 3️⃣ Restore HOME services (IMPORTANT)
+  renderServices(HOME_LIMIT);
+
+  // 4️⃣ Hide workspace
+  const workspace = document.getElementById("serviceWorkspace");
+  workspace.classList.add("hidden");
+  workspace.style.display = "none";
+
+  // 5️⃣ Show Home sections
+  document.querySelector(".hero").classList.remove("hidden");
+  document.getElementById("services").classList.remove("hidden");
+
+  // 6️⃣ Scroll top
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+
 
 </script>
 
@@ -1333,6 +1674,88 @@ function goHome(){
     <button onclick="startServiceFlow()">Continue</button>
   </div>
 </div>
+<footer>
+
+  <div class="footer-top">
+    <div class="footer-grid">
+
+      <!-- ABOUT -->
+      <div>
+        <div class="footer-logo">
+          <img src="logo.png" alt="YCM Logo" style="height:38px">
+          <div>Yojana <span>Connect</span> Mitra</div>
+        </div>
+
+        <p class="footer-about">
+          Yojana Connect Mitra is a citizen assistance platform that helps users
+          apply for government schemes, certificates, jobs, scholarships and
+          welfare services through official government portals.
+        </p>
+
+        <div class="social-links">
+          <a href="#" title="Facebook">📘</a>
+          <a href="#" title="Twitter / X">❌</a>
+          <a href="#" title="Instagram">📸</a>
+          <a href="#" title="YouTube">▶️</a>
+          <a href="#" title="LinkedIn">💼</a>
+        </div>
+      </div>
+
+      <!-- QUICK LINKS -->
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <div class="footer-links">
+          <a href="#">About Us</a>
+          <a href="#">Contact Us</a>
+          <a href="#">Find Nearby YCM Office</a>
+          <a href="#">Become Agent / Partner</a>
+          <a href="#">Help & Support</a>
+        </div>
+      </div>
+
+      <!-- LEGAL -->
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <div class="footer-links">
+          <a href="#">Terms & Conditions</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Refund & Cancellation</a>
+          <a href="#">Disclaimer</a>
+          <a href="#">Grievance Redressal</a>
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="footer-col footer-contact">
+        <h4>Contact</h4>
+        <p>📞 Helpline: <b>+91 6378642802</b></p>
+        <p>📧 Email: support@ycmindia.com</p>
+        <p>🕘 Support Time: 9 AM – 6 PM</p>
+        <p>📍 Offices Available in All Major Blocks</p>
+
+        <a href="#" style="
+          display:inline-block;
+          margin-top:12px;
+          padding:10px 14px;
+          border-radius:10px;
+          background:#38bdf8;
+          color:#0f172a;
+          font-weight:700;
+        ">
+          📍 Find Nearby YCM Office
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    © 2026 Yojana Connect Mitra Pvt. Ltd.  
+    <br>
+    YCM provides assistance only. All applications are processed on official government portals.
+  </div>
+
+</footer>
 
 </body>
 </html>
